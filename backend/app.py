@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 from flask_cors import CORS
 import requests
-import geohash
 import mysql.connector
 import json
 from mysql.connector import Error
@@ -166,6 +165,18 @@ def load_model():
         print(f"❌ Model yükleme hatası: {str(e)}")
         return False
 
+
+# Uygulama import edildiğinde (Gunicorn ile) DB tablolarını oluştur ve modeli yükle
+# Bu sayede __main__ bloğuna ihtiyaç olmadan servis hazır olur
+try:
+    create_tables()
+except Exception as e:
+    print(f"⚠️ Tablolar oluşturulurken hata (ignoring): {e}")
+
+try:
+    load_model()
+except Exception as e:
+    print(f"⚠️ Model yüklenirken hata (ignoring): {e}")
 
 def get_lat_lng_from_address(address, api_key):
     # İstanbul'daki popüler lokasyonlar için sabit koordinatlar
