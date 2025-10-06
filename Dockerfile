@@ -18,10 +18,13 @@ RUN pip install -r backend/requirements.txt
 # Copy application code
 COPY backend backend
 
+# Run from backend directory
+WORKDIR /app/backend
+
 # Default port (Railway will inject PORT)
 ENV PORT=8080
 
 # Start Gunicorn binding to the provided PORT
-CMD sh -c "cd backend && gunicorn -w 2 -k gthread --threads 4 --timeout 90 -b 0.0.0.0:${PORT} app:app"
+CMD gunicorn -w 2 -k gthread --threads 4 --timeout 90 -b 0.0.0.0:${PORT} app:app
 
 
