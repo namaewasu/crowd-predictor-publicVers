@@ -18,14 +18,16 @@ RUN pip install -r backend/requirements.txt
 
 # Copy application code
 COPY backend backend
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
 
-# Run from backend directory
-WORKDIR /app/backend
+# Run from backend directory at runtime via entrypoint
+WORKDIR /app
 
 # Default port (Railway will inject PORT)
 ENV PORT=8080
 
 # Start Gunicorn binding to the provided PORT
-CMD gunicorn -w 2 -k gthread --threads 4 --timeout 90 -b 0.0.0.0:${PORT} app:app
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
 
